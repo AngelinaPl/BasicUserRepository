@@ -1,0 +1,31 @@
+version: "3.9"
+networks:
+  users-repository-dev:
+    driver: bridge
+services:
+  app: 
+    container_name: users-repository
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - users-repository-dev
+    depends_on:
+      - postgres_db
+  postgres_db:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: users-db
+    ports:
+      - "5432:5432"
+    networks:
+      - users-repository-dev
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+volumes:
+  postgres-data:

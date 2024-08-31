@@ -1,5 +1,3 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS base
 WORKDIR /app
 EXPOSE 80
@@ -7,7 +5,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["BasicUserRepository.Api/BasicUserRepository.Api.csproj", "BasicUserRepository.Api/"]
+COPY ["src/BasicUserRepository.Api/BasicUserRepository.Api.csproj", "BasicUserRepository.Api/"]
 RUN dotnet restore "./BasicUserRepository.Api/BasicUserRepository.Api.csproj"
 COPY . .
 WORKDIR "/src/BasicUserRepository.Api"
