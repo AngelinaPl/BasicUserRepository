@@ -20,12 +20,11 @@ namespace BasicUserRepository.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            //services.AddDbContext<DataContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Db")));
-            services.AddScoped<IUserRepository, UserRepositoryFake>();
+            services.AddDbContext<DataContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Db")));
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "User Api", Version = "v1" });
@@ -40,11 +39,8 @@ namespace BasicUserRepository.Api
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
-                c.RoutePrefix = string.Empty;
-            });
+            app.UseSwaggerUI();
+            app.UseCors("default");
 
             app.UseRouting();
 
