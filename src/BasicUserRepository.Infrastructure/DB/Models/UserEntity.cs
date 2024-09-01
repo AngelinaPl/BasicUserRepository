@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace BasicUserRepository.Infrastructure.Entities
+namespace BasicUserRepository.Infrastructure.DB.Models
 {
     public class UserEntity
     {
@@ -25,7 +25,6 @@ namespace BasicUserRepository.Infrastructure.Entities
 
         [Required]
         public DateTime CreatedAt { get; set; }
-
         [Required]
         public DateTime UpdatedAt { get; set; }
     }

@@ -1,6 +1,13 @@
-using BasicUserRepository.Core.Interfaces;
-using BasicUserRepository.Infrastructure.Data;
-using BasicUserRepository.Infrastructure.Repositories;
+using System.Reflection;
+using BasicUserRepository.Core.Services;
+using BasicUserRepository.Core.User.v1.AddUser;
+using BasicUserRepository.Core.User.v1.GetUserById;
+using BasicUserRepository.Infrastructure.DB;
+using BasicUserRepository.Infrastructure.DB.Repositories;
+using BasicUserRepository.Infrastructure.DB.Repositories.Interfaces;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +30,11 @@ namespace BasicUserRepository.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<DataContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Db")));
-            services.AddScoped<IUserRepository, UserRepository>();
+            //services.AddDbContext<DataContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Db")));
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserRepository, UserRepositoryFake>();
+            services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddUserRequestValidator>());
+            services.AddMediatR(typeof(GetUserByIdHandler).Assembly);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "User Api", Version = "v1" });

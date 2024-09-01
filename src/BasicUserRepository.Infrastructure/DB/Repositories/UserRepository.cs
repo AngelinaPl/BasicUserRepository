@@ -1,11 +1,10 @@
-﻿using BasicUserRepository.Core.Interfaces;
-using BasicUserRepository.Infrastructure.Data;
-using BasicUserRepository.Infrastructure.Entities;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BasicUserRepository.Infrastructure.DB.Models;
+using BasicUserRepository.Infrastructure.DB.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace BasicUserRepository.Infrastructure.Repositories
+namespace BasicUserRepository.Infrastructure.DB.Repositories
 {
     public class UserRepository : IUserRepository
     {
@@ -26,10 +25,11 @@ namespace BasicUserRepository.Infrastructure.Repositories
             return await _context.Users.ToListAsync();
         }
 
-        public async Task AddUserAsync(UserEntity user)
+        public async Task<int> AddUserAsync(UserEntity user)
         {
-            await _context.Users.AddAsync(user);
+            var createdUser = await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
+            return createdUser.Entity.Id;
         }
 
         public async Task UpdateUserAsync(UserEntity user)
