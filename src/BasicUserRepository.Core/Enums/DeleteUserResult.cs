@@ -1,8 +1,9 @@
-﻿namespace BasicUserRepository.Core.Enums;
-
-public enum DeleteUserResult
+﻿namespace BasicUserRepository.Core.Enums
 {
-    NotFound,
-    Deleted,
-    Error
+    public enum DeleteUserResult
+    {
+        NotFound,
+        Deleted,
+        Error
+    }
 }

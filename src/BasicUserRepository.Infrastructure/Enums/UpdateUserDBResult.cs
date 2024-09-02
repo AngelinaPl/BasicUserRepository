@@ -1,9 +1,9 @@
 ﻿namespace BasicUserRepository.Infrastructure.Enums
 {
-    public enum DeleteUserDBResult
+    public enum UpdateUserDBResult
     {
         NotFound,
-        Deleted,
+        Updated,
         Error
     }
 }

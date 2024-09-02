@@ -1,8 +1,9 @@
-﻿namespace BasicUserRepository.Core.Enums;
-
-public enum UpdateUserResult
+﻿namespace BasicUserRepository.Core.Enums
 {
-    NotFound,
-    Updated,
-    Error
+    public enum UpdateUserResult
+    {
+        NotFound,
+        Updated,
+        Error
+    }
 }

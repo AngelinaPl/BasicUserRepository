@@ -1,12 +1,13 @@
 ﻿using FluentValidation;
 
-namespace BasicUserRepository.Core.User.v1.DeleteUser;
-
-public class DeleteUserValidator : AbstractValidator<DeleteUserRequest>
+namespace BasicUserRepository.Core.User.v1.DeleteUser
 {
-    public DeleteUserValidator()
+    public class DeleteUserValidator : AbstractValidator<DeleteUserRequest>
     {
-        RuleFor(x => x.Id)
-            .GreaterThan(0).WithMessage("User ID must be greater than zero.");
+        public DeleteUserValidator()
+        {
+            RuleFor(x => x.Id)
+                .GreaterThan(0).WithMessage("User ID must be greater than zero.");
+        }
     }
 }

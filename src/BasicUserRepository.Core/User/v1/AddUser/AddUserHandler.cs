@@ -4,25 +4,26 @@ using BasicUserRepository.Core.Models;
 using BasicUserRepository.Core.Services;
 using MediatR;
 
-namespace BasicUserRepository.Core.User.v1.AddUser;
-
-public class AddUserHandler : IRequestHandler<AddUserRequest, int>
+namespace BasicUserRepository.Core.User.v1.AddUser
 {
-    private readonly IUserService _service;
-
-    public AddUserHandler(IUserService service)
+    public class AddUserHandler : IRequestHandler<AddUserRequest, int>
     {
-        _service = service;
-    }
+        private readonly IUserService _service;
 
-    public async Task<int> Handle(AddUserRequest message, CancellationToken token)
-    {
-        return await _service.AddUserAsync(new UserInfo
+        public AddUserHandler(IUserService service)
         {
-            DateOfBirth = message.DateOfBirth,
-            Email = message.Email,
-            FirstName = message.FirstName,
-            LastName = message.LastName
-        }, token);
+            _service = service;
+        }
+
+        public async Task<int> Handle(AddUserRequest message, CancellationToken token)
+        {
+            return await _service.AddUserAsync(new UserInfo
+            {
+                DateOfBirth = message.DateOfBirth,
+                Email = message.Email,
+                FirstName = message.FirstName,
+                LastName = message.LastName
+            }, token);
+        }
     }
 }

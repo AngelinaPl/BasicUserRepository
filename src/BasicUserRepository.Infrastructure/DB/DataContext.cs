@@ -1,14 +1,15 @@
 ﻿using BasicUserRepository.Infrastructure.DB.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BasicUserRepository.Infrastructure.DB;
-
-public class DataContext : DbContext
+namespace BasicUserRepository.Infrastructure.DB
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
+    public class DataContext : DbContext
     {
-        Database.EnsureCreated();
-    }
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
+            Database.EnsureCreated();
+        }
 
-    public DbSet<UserEntity> Users { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
+    }
 }

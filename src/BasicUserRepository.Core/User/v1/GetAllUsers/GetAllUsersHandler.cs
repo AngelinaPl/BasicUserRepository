@@ -4,25 +4,26 @@ using BasicUserRepository.Core.Models;
 using BasicUserRepository.Core.Services;
 using MediatR;
 
-namespace BasicUserRepository.Core.User.v1.GetAllUsers;
-
-public class GetAllUsersHandler : IRequestHandler<GetAllUsersRequest, UserInfo[]>
+namespace BasicUserRepository.Core.User.v1.GetAllUsers
 {
-    private readonly IUserService _service;
-
-    public GetAllUsersHandler(IUserService service)
+    public class GetAllUsersHandler : IRequestHandler<GetAllUsersRequest, UserInfo[]>
     {
-        _service = service;
-    }
+        private readonly IUserService _service;
 
-    public async Task<UserInfo[]> Handle(GetAllUsersRequest message, CancellationToken token)
-    {
-        return await _service.GetAllUsersAsync(new UserFilter
+        public GetAllUsersHandler(IUserService service)
         {
-            DateOfBirth = message.DateOfBirth,
-            Email = message.Email,
-            FirstName = message.FirstName,
-            LastName = message.LastName
-        }, token);
+            _service = service;
+        }
+
+        public async Task<UserInfo[]> Handle(GetAllUsersRequest message, CancellationToken token)
+        {
+            return await _service.GetAllUsersAsync(new UserFilter
+            {
+                DateOfBirth = message.DateOfBirth,
+                Email = message.Email,
+                FirstName = message.FirstName,
+                LastName = message.LastName
+            }, token);
+        }
     }
 }
