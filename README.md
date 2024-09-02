@@ -1,3 +1,10 @@
+# Локальный запуск приложения:
+- Установить Docker (если нет)
+- Запустить Docker
+- Открыть терминал в папке с docker-compose.yml
+- Запустить команду ```docker-compose up```
+- Сервис будет доступен по адресу http://localhost:5000/swagger/index.html
+
 # UsersController
 
 `UsersController` предоставляет API для управления пользователями. Контроллер использует MediatR для обработки запросов.
@@ -51,9 +58,4 @@
   - `404 Not Found`: Пользователь не найден.
   - `500 Internal Server Error`: Внутренняя ошибка сервера.
 
-# Локальный запуск приложения:
-- Установить Docker (если нет)
-- Запустить Docker
-- Открыть терминал в папке с docker-compose.yml
-- Запустить команду ```docker-compose up```
-- Сервис будет доступен по адресу http://localhost:5000/swagger/index.html
+
