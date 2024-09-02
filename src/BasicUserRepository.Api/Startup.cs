@@ -1,16 +1,12 @@
-using System.Reflection;
 using BasicUserRepository.Core.Services;
 using BasicUserRepository.Core.User.v1.AddUser;
 using BasicUserRepository.Core.User.v1.GetUserById;
-using BasicUserRepository.Infrastructure.DB;
 using BasicUserRepository.Infrastructure.DB.Repositories;
 using BasicUserRepository.Infrastructure.DB.Repositories.Interfaces;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,8 +27,9 @@ namespace BasicUserRepository.Api
         {
             services.AddControllers();
             //services.AddDbContext<DataContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Db")));
+            //services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUserRepository, UserRepositoryFake>();
+            services.AddSingleton<IUserRepository, UserRepositoryFake>();
             services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddUserRequestValidator>());
             services.AddMediatR(typeof(GetUserByIdHandler).Assembly);
             services.AddSwaggerGen(c =>
@@ -43,10 +40,7 @@ namespace BasicUserRepository.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseSwagger();
             app.UseSwaggerUI();
@@ -56,10 +50,7 @@ namespace BasicUserRepository.Api
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

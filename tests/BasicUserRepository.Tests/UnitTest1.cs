@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace BasicUserRepository.Tests
@@ -8,7 +7,6 @@ namespace BasicUserRepository.Tests
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

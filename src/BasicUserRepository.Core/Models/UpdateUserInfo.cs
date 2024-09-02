@@ -2,7 +2,7 @@
 
 namespace BasicUserRepository.Core.Models;
 
-public class UserInfo
+public class UpdateUserInfo
 {
     public int Id { get; set; }
 
@@ -12,9 +12,5 @@ public class UserInfo
 
     public string Email { get; set; }
 
-    public DateTime DateOfBirth { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? DateOfBirth { get; set; }
 }

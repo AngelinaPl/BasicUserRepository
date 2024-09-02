@@ -1,10 +1,8 @@
 ﻿using System;
-using BasicUserRepository.Core.Models;
-using MediatR;
 
-namespace BasicUserRepository.Core.User.v1.GetAllUsers;
+namespace BasicUserRepository.Infrastructure.Models;
 
-public class GetAllUsersRequest : IRequest<UserInfo[]>
+public class UserDBFilter
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

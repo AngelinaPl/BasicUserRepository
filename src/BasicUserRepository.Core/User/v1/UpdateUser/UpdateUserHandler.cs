@@ -1,24 +1,26 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using BasicUserRepository.Core.Enums;
 using BasicUserRepository.Core.Models;
 using BasicUserRepository.Core.Services;
 using MediatR;
 
-namespace BasicUserRepository.Core.User.v1.GetAllUsers;
+namespace BasicUserRepository.Core.User.v1.UpdateUser;
 
-public class GetAllUsersHandler : IRequestHandler<GetAllUsersRequest, UserInfo[]>
+public class UpdateUserHandler : IRequestHandler<UpdateUserRequest, UpdateUserResult>
 {
     private readonly IUserService _service;
 
-    public GetAllUsersHandler(IUserService service)
+    public UpdateUserHandler(IUserService service)
     {
         _service = service;
     }
 
-    public async Task<UserInfo[]> Handle(GetAllUsersRequest message, CancellationToken token)
+    public async Task<UpdateUserResult> Handle(UpdateUserRequest message, CancellationToken token)
     {
-        return await _service.GetAllUsersAsync(new UserFilter
+        return await _service.UpdateUserAsync(new UpdateUserInfo
         {
+            Id = message.Id,
             DateOfBirth = message.DateOfBirth,
             Email = message.Email,
             FirstName = message.FirstName,

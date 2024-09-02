@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using BasicUserRepository.Infrastructure.DB.Models;
+using BasicUserRepository.Infrastructure.Enums;
+using BasicUserRepository.Infrastructure.Models;
 
-namespace BasicUserRepository.Infrastructure.DB.Repositories.Interfaces
+namespace BasicUserRepository.Infrastructure.DB.Repositories.Interfaces;
+
+public interface IUserRepository
 {
-    public interface IUserRepository
-    {
-        Task<UserEntity> GetUserByIdAsync(int id);
-        Task<IEnumerable<UserEntity>> GetAllUsersAsync();
-        Task<int> AddUserAsync(UserEntity user);
-        Task UpdateUserAsync(UserEntity user);
-        Task DeleteUserAsync(int id);
-    }
+    Task<UserEntity> GetUserByIdAsync(int id);
+    Task<UserEntity[]> GetAllUsersAsync(UserDBFilter filter);
+    Task<int> AddUserAsync(UserEntity user);
+    Task<bool> UpdateUserAsync(UserEntity user);
+    Task<DeleteUserDBResult> DeleteUserAsync(int id);
 }

@@ -1,15 +1,17 @@
-﻿using BasicUserRepository.Core.Models;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using BasicUserRepository.Core.Enums;
+using BasicUserRepository.Core.Models;
 using BasicUserRepository.Core.User.v1.AddUser;
+using BasicUserRepository.Core.User.v1.DeleteUser;
 using BasicUserRepository.Core.User.v1.GetAllUsers;
 using BasicUserRepository.Core.User.v1.GetUserById;
+using BasicUserRepository.Core.User.v1.UpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace BasicUserRepository.Api.Controllers
 {
@@ -17,54 +19,59 @@ namespace BasicUserRepository.Api.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
         private readonly IMediator _mediator;
 
-        public UsersController(ILogger<UsersController> logger, IMediator mediator)
+        public UsersController(IMediator mediator)
         {
-            _logger = logger;
             _mediator = mediator;
         }
 
         /// <summary>
-        /// Получить пользователя по ID.
+        ///     Получить пользователя по ID.
         /// </summary>
         /// <param name="id">ID пользователя</param>
         /// <returns>Пользователь</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(200, "Пользователь успешно найден", typeof(UserInfo))]
         [SwaggerResponse(404, "Пользователь не найден")]
-        public async Task<ActionResult<UserInfo>> GetUserById([FromHeader] GetUserByIdRequest request, CancellationToken token)
+        [SwaggerResponse(400, "Id пользователя некорректно")]
+        public async Task<ActionResult<UserInfo>> GetUserById([FromRoute] int id,
+            CancellationToken token)
         {
-            var user = await _mediator.Send(request, token);
-            if (user == null)
+            if (id > 0)
             {
-                return NotFound();
+                var user = await _mediator.Send(new GetUserByIdRequest { Id = id }, token);
+                if (user == null) return NotFound();
+                return Ok(user);
             }
-            return Ok(user);
+
+            return StatusCode(400, "User ID must be greater than zero.");
         }
 
         /// <summary>
-        /// Получить всех пользователей.
+        ///     Получить всех пользователей.
         /// </summary>
+        /// <param name="request">Фильтр по полям пользователя</param>
         /// <returns>Список пользователей</returns>
-        [HttpGet]
+        [HttpGet("GetAllUsers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerResponse(200, "Пользователи успешно найдены", typeof(IEnumerable<UserInfo>))]
-        public async Task<ActionResult<IEnumerable<UserInfo>>> GetAllUsers(CancellationToken token)
+        public async Task<ActionResult<IEnumerable<UserInfo>>> GetAllUsers([FromQuery] GetAllUsersRequest request,
+            CancellationToken token)
         {
-            var users = await _mediator.Send(new GetAllUsersRequest(), token);
+            var users = await _mediator.Send(request, token);
             return Ok(users);
         }
 
         /// <summary>
-        /// Добавить нового пользователя.
+        ///     Добавить нового пользователя.
         /// </summary>
         /// <param name="request">Данные пользователя</param>
         /// <returns>Id созданного пользователя</returns>
-        [HttpPost]
+        [HttpPost("AddUser")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [SwaggerResponse(201, "Пользователь успешно создан", typeof(int))]
@@ -76,50 +83,51 @@ namespace BasicUserRepository.Api.Controllers
         }
 
         /// <summary>
-        /// Обновить данные пользователя.
+        ///     Обновить данные пользователя.
         /// </summary>
-        /// <param name="id">ID пользователя</param>
-        /// <param name="user">Обновленные данные пользователя</param>
+        /// <param name="request">Обновленные данные пользователя</param>
         /// <returns>Результат операции</returns>
-        [HttpPut("{id}")]
+        [HttpPut("UpdateUser")]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult> UpdateUser(int id, [FromBody] UserEntity user)
+        [ProducesResponseType(500)]
+        public async Task<ActionResult> UpdateUser([FromBody] UpdateUserRequest request, CancellationToken token)
         {
-            if (id != user.Id)
+            var result = await _mediator.Send(request, token);
+            return result switch
             {
-                return BadRequest();
-            }
-
-            var existingUser = await _userRepository.GetUserByIdAsync(id);
-            if (existingUser == null)
-            {
-                return NotFound();
-            }
-
-            await _userRepository.UpdateUserAsync(user);
-            return NoContent();
+                UpdateUserResult.NotFound => NotFound(),
+                UpdateUserResult.Error => StatusCode(500, "Internal Server Error"),
+                UpdateUserResult.Updated => NoContent(),
+                _ => NoContent()
+            };
         }
 
         /// <summary>
-        /// Удалить пользователя.
+        ///     Удалить пользователя.
         /// </summary>
         /// <param name="id">ID пользователя</param>
         /// <returns>Результат операции</returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteUser")]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult> DeleteUser(int id)
+        [ProducesResponseType(500)]
+        public async Task<ActionResult> DeleteUser([FromBody] DeleteUserRequest request, CancellationToken token)
         {
-            var user = await _userRepository.GetUserByIdAsync(id);
-            if (user == null)
+            var result = await _mediator.Send(request, token);
+            return result switch
             {
-                return NotFound();
-            }
-
-            await _userRepository.DeleteUserAsync(id);
-            return NoContent();
+                DeleteUserResult.NotFound => NotFound(),
+                DeleteUserResult.Error => StatusCode(500, "Internal Server Error"),
+                DeleteUserResult.Deleted => NoContent(),
+                _ => NoContent()
+            };
         }
     }
 }
